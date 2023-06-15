@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  flight-service:
+    container_name: flight-service
+    image: flight-service:3
+    expose:
+      - 8088
+    ports:
+      - "8088:8088"
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/postgres
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+
+  flight_crew-service:
+    container_name: flight_crew-service
+    image: flight-crew:latest
+    expose:
+      - 8081
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/postgres
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+
+  db:
+    container_name: db
+    image: postgres:12
+    environment: # environment variables for the Postgres container
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports: # port exposed to the host machine
+      - "5432:5432"
+    volumes: # volume used to persist data
+      - pgdata:/var/lib/postgresql/data
+  redis:
+    container_name: redis
+    image: redis:latest
+    hostname: redis
+    ports:
+      - "6379:6379"
+
+volumes: # volume creation
+  pgdata: {}
